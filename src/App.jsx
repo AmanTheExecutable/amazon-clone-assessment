@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { HashRouter as BrowserRouter, Routes, Route } from 'react-router-dom';
 import { FilterProvider } from './context/FilterContext';
 import Header from './components/Header/Header';
 import ProductListingPage from './pages/ProductListingPage/ProductListingPage';
