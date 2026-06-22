@@ -1,0 +1,15 @@
+@use '../../styles/variables' as *;
+
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: $spacing-md;
+
+  &__empty {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: $spacing-xl;
+    color: $text-muted;
+    font-size: 1rem;
+  }
+}

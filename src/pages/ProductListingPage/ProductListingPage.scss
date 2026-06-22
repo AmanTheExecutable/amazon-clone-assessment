@@ -1,0 +1,38 @@
+@use '../../styles/variables' as *;
+
+.listing-page {
+  min-height: calc(100vh - 60px);
+  padding: $spacing-md;
+
+  &__inner {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    gap: $spacing-lg;
+    align-items: flex-start;
+  }
+
+  &__main {
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__header {
+    display: flex;
+    align-items: baseline;
+    gap: $spacing-md;
+    margin-bottom: $spacing-md;
+  }
+
+  &__heading {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: $text-dark;
+    text-transform: capitalize;
+  }
+
+  &__count {
+    font-size: 0.875rem;
+    color: $text-muted;
+  }
+}
