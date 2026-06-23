@@ -66,10 +66,12 @@ export default function ProductDetailPage() {
 
           <div className="detail-page__info">
             <h1 className="detail-page__title">{product.title}</h1>
-            <div className="detail-page__price">${product.price.toFixed(2)}</div>
-            <div className="detail-page__rating">
+
+            <div className="detail-page__price-row">
+              <span className="detail-page__price">${product.price.toFixed(2)}</span>
               <StarRating rating={product.rating} count={product.reviews?.length} />
             </div>
+
             <div className="detail-page__meta">
               <div className="detail-page__meta-item">
                 <span className="detail-page__meta-label">Brand:</span>
@@ -79,39 +81,31 @@ export default function ProductDetailPage() {
                 <span className="detail-page__meta-label">Category:</span>
                 <span className="detail-page__meta-category">{product.category}</span>
               </div>
-              {product.stock !== undefined && (
-                <div className="detail-page__meta-item">
-                  <span className="detail-page__meta-label">Stock:</span>
-                  <span className={product.stock > 0 ? 'detail-page__in-stock' : 'detail-page__out-stock'}>
-                    {product.stock > 0 ? `${product.stock} available` : 'Out of stock'}
-                  </span>
-                </div>
-              )}
             </div>
-            <p className="detail-page__description">{product.description}</p>
-            <button className="detail-page__add-to-cart">Add to Cart</button>
+
+            <div className="detail-page__section">
+              <h2 className="detail-page__section-title">Description</h2>
+              <p className="detail-page__description">{product.description}</p>
+            </div>
+
+            {product.reviews && product.reviews.length > 0 && (
+              <div className="detail-page__section">
+                <h2 className="detail-page__section-title">Reviews</h2>
+                <div className="detail-page__reviews-list">
+                  {product.reviews.map((review, idx) => (
+                    <div key={idx} className="detail-page__review">
+                      <div className="detail-page__review-header">
+                        <span className="detail-page__reviewer">{review.reviewerName}</span>
+                        <StarRating rating={review.rating} />
+                      </div>
+                      <p className="detail-page__review-comment">{review.comment}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </div>
-
-        {product.reviews && product.reviews.length > 0 && (
-          <div className="detail-page__reviews">
-            <h2 className="detail-page__reviews-title">Customer Reviews</h2>
-            <div className="detail-page__reviews-list">
-              {product.reviews.map((review, idx) => (
-                <div key={idx} className="detail-page__review">
-                  <div className="detail-page__review-header">
-                    <span className="detail-page__reviewer">{review.reviewerName}</span>
-                    <StarRating rating={review.rating} />
-                  </div>
-                  <p className="detail-page__review-comment">{review.comment}</p>
-                  <span className="detail-page__review-date">
-                    {new Date(review.date).toLocaleDateString()}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );
