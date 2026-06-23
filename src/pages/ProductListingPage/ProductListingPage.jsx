@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { fetchProducts, fetchCategories, fetchByCategory } from '../../api/products';
 import { useFilters } from '../../context/FilterContext';
+import { USE_API_PAGINATION, PAGE_SIZE } from '../../config/featureFlags';
 import FilterPanel from '../../components/FilterPanel/FilterPanel';
 import ProductGrid from '../../components/ProductGrid/ProductGrid';
 import Pagination from '../../components/Pagination/Pagination';
@@ -8,26 +9,35 @@ import Loader from '../../components/Loader/Loader';
 import ErrorMessage from '../../components/ErrorMessage/ErrorMessage';
 import './ProductListingPage.scss';
 
-const ITEMS_PER_PAGE = 12;
-
 export default function ProductListingPage() {
   const { filters } = useFilters();
   const [allProducts, setAllProducts] = useState([]);
   const [categories, setCategories] = useState([]);
+  const [totalFromApi, setTotalFromApi] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  const hasClientSideFilters = filters.minPrice !== '' || filters.maxPrice !== '' || filters.brands.length > 0;
+  const useApiPaging = USE_API_PAGINATION && !hasClientSideFilters;
 
   useEffect(() => {
     const loadData = async () => {
       setLoading(true);
       setError(null);
       try {
+        const skip = useApiPaging ? (filters.page - 1) * PAGE_SIZE : 0;
+        const limit = useApiPaging ? PAGE_SIZE : 100;
+
         const [catRes, prodRes] = await Promise.all([
           fetchCategories(),
-          filters.category ? fetchByCategory(filters.category) : fetchProducts(100),
+          filters.category
+            ? fetchByCategory(filters.category, limit, skip)
+            : fetchProducts(limit, skip),
         ]);
+
         setCategories(catRes.data);
         setAllProducts(prodRes.data.products);
+        setTotalFromApi(prodRes.data.total);
       } catch (err) {
         setError('Failed to load products. Please try again.');
       } finally {
@@ -35,27 +45,26 @@ export default function ProductListingPage() {
       }
     };
     loadData();
-  }, [filters.category]);
+  }, [filters.category, filters.page, useApiPaging]);
 
   const filteredProducts = useMemo(() => {
+    if (useApiPaging) return allProducts;
     let result = [...allProducts];
-    if (filters.minPrice !== '') {
-      result = result.filter(p => p.price >= Number(filters.minPrice));
-    }
-    if (filters.maxPrice !== '') {
-      result = result.filter(p => p.price <= Number(filters.maxPrice));
-    }
-    if (filters.brands.length > 0) {
-      result = result.filter(p => filters.brands.includes(p.brand));
-    }
+    if (filters.minPrice !== '') result = result.filter(p => p.price >= Number(filters.minPrice));
+    if (filters.maxPrice !== '') result = result.filter(p => p.price <= Number(filters.maxPrice));
+    if (filters.brands.length > 0) result = result.filter(p => filters.brands.includes(p.brand));
     return result;
-  }, [allProducts, filters.minPrice, filters.maxPrice, filters.brands]);
+  }, [allProducts, filters.minPrice, filters.maxPrice, filters.brands, useApiPaging]);
 
-  const totalPages = Math.ceil(filteredProducts.length / ITEMS_PER_PAGE);
-  const paginatedProducts = filteredProducts.slice(
-    (filters.page - 1) * ITEMS_PER_PAGE,
-    filters.page * ITEMS_PER_PAGE
-  );
+  const totalPages = useApiPaging
+    ? Math.ceil(totalFromApi / PAGE_SIZE)
+    : Math.ceil(filteredProducts.length / PAGE_SIZE);
+
+  const displayedProducts = useApiPaging
+    ? filteredProducts
+    : filteredProducts.slice((filters.page - 1) * PAGE_SIZE, filters.page * PAGE_SIZE);
+
+  const resultCount = useApiPaging ? totalFromApi : filteredProducts.length;
 
   return (
     <div className="listing-page">
@@ -68,15 +77,13 @@ export default function ProductListingPage() {
                 ? categories.find(c => c.slug === filters.category)?.name || filters.category
                 : 'All Products'}
             </h1>
-            <span className="listing-page__count">
-              {filteredProducts.length} results
-            </span>
+            <span className="listing-page__count">{resultCount} results</span>
           </div>
           {loading && <Loader />}
           {error && <ErrorMessage message={error} />}
           {!loading && !error && (
             <>
-              <ProductGrid products={paginatedProducts} />
+              <ProductGrid products={displayedProducts} />
               <Pagination totalPages={totalPages} />
             </>
           )}
