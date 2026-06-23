@@ -20,13 +20,14 @@ export default function ProductListingPage() {
 
   const hasClientSideFilters = filters.minPrice !== '' || filters.maxPrice !== '' || filters.brands.length > 0;
   const useApiPaging = USE_API_PAGINATION && !hasClientSideFilters;
+  const pageForApi = useApiPaging ? filters.page : 1;
 
   const loadData = useCallback(async () => {
     setLoading(true);
     setError(null);
     setAllProducts([]);
     try {
-      const skip = useApiPaging ? (filters.page - 1) * PAGE_SIZE : 0;
+      const skip = useApiPaging ? (pageForApi - 1) * PAGE_SIZE : 0;
       const limit = useApiPaging ? PAGE_SIZE : 100;
 
       const [catRes, prodRes] = await Promise.all([
@@ -44,7 +45,7 @@ export default function ProductListingPage() {
     } finally {
       setLoading(false);
     }
-  }, [filters.category, filters.page, useApiPaging]);
+  }, [filters.category, pageForApi, useApiPaging]);
 
   useEffect(() => {
     loadData();
