@@ -153,4 +153,5 @@ All API errors are routed through `src/utils/parseError.js` which distinguishes:
 - **Sorting** — sort by price or rating client-side
 - **Skeleton loaders** — replace the spinner with card-shaped skeletons for better perceived performance
 - **Infinite scroll** — replace pagination with intersection observer-based loading
+- **Responsive design** — collapsible filter sidebar on mobile with a slide-in drawer, responsive product grid breakpoints for tablet and phone
 - **Tests** — unit tests for `parseError`, filter logic, and component rendering with React Testing Library
