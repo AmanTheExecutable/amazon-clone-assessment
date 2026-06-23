@@ -7,6 +7,9 @@
   gap: $spacing-xs;
   padding: $spacing-lg 0;
   flex-wrap: wrap;
+  position: sticky;
+  bottom: 0;
+  backdrop-filter: blur(4px);
 
   &__btn {
     padding: $spacing-sm $spacing-md;
