@@ -4,6 +4,8 @@ A React e-commerce application built as a frontend engineering assessment. Featu
 
 **Live Demo:** https://amantheexecutable.github.io/amazon-clone-assessment/
 
+**Demo Video:** [![Watch Demo](https://img.shields.io/badge/Watch-Demo-red?style=for-the-badge&logo=google-drive)](https://drive.google.com/file/d/11mUDG9-Wamm5FjRoE6MCQjZoboC9BQfS/view?usp=sharing)
+
 ---
 
 ## Features
