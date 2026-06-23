@@ -36,7 +36,8 @@ export default function Pagination({ totalPages }) {
         onClick={() => handlePageChange(currentPage - 1)}
         disabled={currentPage === 1}
       >
-        Previous
+        <span className="pagination__nav-long">Previous</span>
+        <span className="pagination__nav-short">‹</span>
       </button>
 
       {getPageNumbers().map((page, idx) => (
@@ -56,7 +57,8 @@ export default function Pagination({ totalPages }) {
         onClick={() => handlePageChange(currentPage + 1)}
         disabled={currentPage === totalPages}
       >
-        Next
+        <span className="pagination__nav-long">Next</span>
+        <span className="pagination__nav-short">›</span>
       </button>
     </div>
   );

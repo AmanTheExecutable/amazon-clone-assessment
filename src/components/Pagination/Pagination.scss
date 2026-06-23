@@ -66,4 +66,41 @@
     font-size: 0.875rem;
     letter-spacing: 0.1em;
   }
+
+  &__nav-short {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .pagination {
+    flex-wrap: nowrap;
+    gap: 4px;
+    padding: $spacing-sm;
+
+    &__btn {
+      min-width: 32px;
+      height: 32px;
+      font-size: 0.8rem;
+      padding: 0 6px;
+    }
+
+    &__btn--nav {
+      padding: 0 $spacing-sm;
+    }
+
+    &__ellipsis {
+      min-width: 24px;
+      padding: 0;
+    }
+
+    &__nav-long {
+      display: none;
+    }
+
+    &__nav-short {
+      display: inline;
+      font-size: 1rem;
+    }
+  }
 }

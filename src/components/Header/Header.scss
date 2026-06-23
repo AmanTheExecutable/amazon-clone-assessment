@@ -37,6 +37,7 @@
     font-size: 1.2rem;
     padding: $spacing-xs;
     border-radius: $border-radius;
+    cursor: pointer;
     &:hover {
       background-color: rgba($white, 0.1);
     }
@@ -56,6 +57,7 @@
     font-size: 0.95rem;
     border: none;
     border-radius: 0;
+    min-width: 0;
   }
 
   &__search-btn {
@@ -63,6 +65,8 @@
     padding: $spacing-sm $spacing-md;
     font-size: 1rem;
     border-radius: 0;
+    cursor: pointer;
+    flex-shrink: 0;
     &:hover {
       background-color: $accent;
     }
@@ -82,8 +86,41 @@
     font-size: 1.2rem;
     padding: $spacing-xs;
     border-radius: $border-radius;
+    cursor: pointer;
     &:hover {
       background-color: rgba($white, 0.1);
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .header {
+    padding: $spacing-xs $spacing-sm;
+
+    &__inner {
+      gap: $spacing-sm;
+    }
+
+    &__logo {
+      font-size: 1.1rem;
+    }
+
+    &__search-input {
+      font-size: 0.85rem;
+      padding: $spacing-xs $spacing-sm;
+    }
+
+    &__search-btn {
+      padding: $spacing-xs $spacing-sm;
+      font-size: 0.9rem;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .header {
+    &__logo {
+      display: none;
     }
   }
 }

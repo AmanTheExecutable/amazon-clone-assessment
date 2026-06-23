@@ -6,7 +6,6 @@ export default function Header() {
     <header className="header">
       <div className="header__inner">
         <div className="header__left">
-          <button className="header__hamburger">☰</button>
           <Link to="/" className="header__logo">
             Home
           </Link>

@@ -58,3 +58,23 @@
     margin-top: $spacing-xs;
   }
 }
+
+@media (max-width: 768px) {
+  .product-card {
+    &__image-wrapper {
+      height: 150px;
+    }
+
+    &__body {
+      padding: $spacing-sm;
+    }
+
+    &__title {
+      font-size: 0.8rem;
+    }
+
+    &__price {
+      font-size: 1rem;
+    }
+  }
+}

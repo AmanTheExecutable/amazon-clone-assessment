@@ -19,9 +19,38 @@
 
   &__header {
     display: flex;
-    align-items: baseline;
+    align-items: center;
+    justify-content: space-between;
     gap: $spacing-md;
     margin-bottom: $spacing-md;
+    flex-wrap: wrap;
+  }
+
+  &__header-left {
+    display: flex;
+    align-items: center;
+    gap: $spacing-md;
+  }
+
+  &__filter-toggle {
+    display: none;
+    align-items: center;
+    gap: $spacing-xs;
+    padding: $spacing-xs $spacing-md;
+    background-color: $white;
+    border: 1px solid $border;
+    border-radius: $border-radius;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: $text-dark;
+    cursor: pointer;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    transition: all 0.15s ease;
+
+    &:hover {
+      background-color: $secondary;
+      border-color: $accent;
+    }
   }
 
   &__heading {
@@ -34,5 +63,24 @@
   &__count {
     font-size: 0.875rem;
     color: $text-muted;
+    white-space: nowrap;
+  }
+}
+
+@media (max-width: 768px) {
+  .listing-page {
+    padding: $spacing-sm;
+
+    &__inner {
+      gap: 0;
+    }
+
+    &__filter-toggle {
+      display: flex;
+    }
+
+    &__heading {
+      font-size: 1rem;
+    }
   }
 }

@@ -17,6 +17,7 @@ export default function ProductListingPage() {
   const [totalFromApi, setTotalFromApi] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [filterOpen, setFilterOpen] = useState(false);
 
   const hasClientSideFilters = filters.minPrice !== '' || filters.maxPrice !== '' || filters.brands.length > 0;
   const useApiPaging = USE_API_PAGINATION && !hasClientSideFilters;
@@ -73,14 +74,24 @@ export default function ProductListingPage() {
   return (
     <div className="listing-page">
       <div className="listing-page__inner">
-        <FilterPanel categories={categories} allProducts={allProducts} />
+        <FilterPanel
+          categories={categories}
+          allProducts={allProducts}
+          isOpen={filterOpen}
+          onClose={() => setFilterOpen(false)}
+        />
         <main className="listing-page__main">
           <div className="listing-page__header">
-            <h1 className="listing-page__heading">
-              {filters.category
-                ? categories.find(c => c.slug === filters.category)?.name || filters.category
-                : 'All Products'}
-            </h1>
+            <div className="listing-page__header-left">
+              <button className="listing-page__filter-toggle" onClick={() => setFilterOpen(true)}>
+                ☰ Filters
+              </button>
+              <h1 className="listing-page__heading">
+                {filters.category
+                  ? categories.find(c => c.slug === filters.category)?.name || filters.category
+                  : 'All Products'}
+              </h1>
+            </div>
             {!loading && !error && (
               <span className="listing-page__count">{resultCount} results</span>
             )}

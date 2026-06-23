@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useFilters } from '../../context/FilterContext';
 import './FilterPanel.scss';
 
-export default function FilterPanel({ categories, allProducts }) {
+export default function FilterPanel({ categories, allProducts, isOpen, onClose }) {
   const { filters, updateFilter, resetFilters } = useFilters();
   const [minPrice, setMinPrice] = useState(filters.minPrice);
   const [maxPrice, setMaxPrice] = useState(filters.maxPrice);
@@ -39,10 +39,15 @@ export default function FilterPanel({ categories, allProducts }) {
   };
 
   return (
-    <aside className="filter-panel">
+    <>
+      {isOpen && <div className="filter-panel__overlay" onClick={onClose} />}
+      <aside className={`filter-panel${isOpen ? ' filter-panel--open' : ''}`}>
       <div className="filter-panel__header">
         <h2 className="filter-panel__title">Filters</h2>
-        <button className="filter-panel__reset" onClick={handleReset}>Clear All</button>
+        <div className="filter-panel__header-actions">
+          <button className="filter-panel__reset" onClick={handleReset}>Clear All</button>
+          <button className="filter-panel__close" onClick={onClose}>✕</button>
+        </div>
       </div>
 
       <div className="filter-panel__section">
@@ -109,5 +114,6 @@ export default function FilterPanel({ categories, allProducts }) {
         </div>
       )}
     </aside>
+    </>
   );
 }
