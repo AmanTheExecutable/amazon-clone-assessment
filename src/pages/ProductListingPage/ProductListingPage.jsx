@@ -1,7 +1,8 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { fetchProducts, fetchCategories, fetchByCategory } from '../../api/products';
 import { useFilters } from '../../context/FilterContext';
 import { USE_API_PAGINATION, PAGE_SIZE } from '../../config/featureFlags';
+import { parseError } from '../../utils/parseError';
 import FilterPanel from '../../components/FilterPanel/FilterPanel';
 import ProductGrid from '../../components/ProductGrid/ProductGrid';
 import Pagination from '../../components/Pagination/Pagination';
@@ -20,32 +21,34 @@ export default function ProductListingPage() {
   const hasClientSideFilters = filters.minPrice !== '' || filters.maxPrice !== '' || filters.brands.length > 0;
   const useApiPaging = USE_API_PAGINATION && !hasClientSideFilters;
 
-  useEffect(() => {
-    const loadData = async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        const skip = useApiPaging ? (filters.page - 1) * PAGE_SIZE : 0;
-        const limit = useApiPaging ? PAGE_SIZE : 100;
+  const loadData = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    setAllProducts([]);
+    try {
+      const skip = useApiPaging ? (filters.page - 1) * PAGE_SIZE : 0;
+      const limit = useApiPaging ? PAGE_SIZE : 100;
 
-        const [catRes, prodRes] = await Promise.all([
-          fetchCategories(),
-          filters.category
-            ? fetchByCategory(filters.category, limit, skip)
-            : fetchProducts(limit, skip),
-        ]);
+      const [catRes, prodRes] = await Promise.all([
+        fetchCategories(),
+        filters.category
+          ? fetchByCategory(filters.category, limit, skip)
+          : fetchProducts(limit, skip),
+      ]);
 
-        setCategories(catRes.data);
-        setAllProducts(prodRes.data.products);
-        setTotalFromApi(prodRes.data.total);
-      } catch (err) {
-        setError('Failed to load products. Please try again.');
-      } finally {
-        setLoading(false);
-      }
-    };
-    loadData();
+      setCategories(catRes.data);
+      setAllProducts(prodRes.data.products);
+      setTotalFromApi(prodRes.data.total);
+    } catch (err) {
+      setError(parseError(err));
+    } finally {
+      setLoading(false);
+    }
   }, [filters.category, filters.page, useApiPaging]);
+
+  useEffect(() => {
+    loadData();
+  }, [loadData]);
 
   const filteredProducts = useMemo(() => {
     if (useApiPaging) return allProducts;
@@ -77,10 +80,12 @@ export default function ProductListingPage() {
                 ? categories.find(c => c.slug === filters.category)?.name || filters.category
                 : 'All Products'}
             </h1>
-            <span className="listing-page__count">{resultCount} results</span>
+            {!loading && !error && (
+              <span className="listing-page__count">{resultCount} results</span>
+            )}
           </div>
           {loading && <Loader />}
-          {error && <ErrorMessage message={error} />}
+          {error && <ErrorMessage message={error} onRetry={loadData} />}
           {!loading && !error && (
             <>
               <ProductGrid products={displayedProducts} />

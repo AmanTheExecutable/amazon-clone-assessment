@@ -1,6 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { fetchProductById } from '../../api/products';
+import { parseError } from '../../utils/parseError';
 import StarRating from '../../components/StarRating/StarRating';
 import Loader from '../../components/Loader/Loader';
 import ErrorMessage from '../../components/ErrorMessage/ErrorMessage';
@@ -14,25 +15,44 @@ export default function ProductDetailPage() {
   const [error, setError] = useState(null);
   const [activeImage, setActiveImage] = useState(0);
 
-  useEffect(() => {
-    const loadProduct = async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        const res = await fetchProductById(id);
-        setProduct(res.data);
-        setActiveImage(0);
-      } catch (err) {
-        setError('Failed to load product. Please try again.');
-      } finally {
-        setLoading(false);
-      }
-    };
-    loadProduct();
+  const loadProduct = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    setProduct(null);
+    try {
+      const res = await fetchProductById(id);
+      setProduct(res.data);
+      setActiveImage(0);
+    } catch (err) {
+      setError(parseError(err));
+    } finally {
+      setLoading(false);
+    }
   }, [id]);
 
+  useEffect(() => {
+    loadProduct();
+  }, [loadProduct]);
+
   if (loading) return <Loader />;
-  if (error) return <ErrorMessage message={error} />;
+
+  if (error) {
+    const is404 = error === 'Product not found.';
+    return (
+      <div className="detail-page">
+        <div className="detail-page__inner">
+          <button className="detail-page__back" onClick={() => navigate(-1)}>
+            ← Back
+          </button>
+          <ErrorMessage
+            message={error}
+            onRetry={is404 ? undefined : loadProduct}
+          />
+        </div>
+      </div>
+    );
+  }
+
   if (!product) return null;
 
   const images = product.images && product.images.length > 0 ? product.images : [product.thumbnail];
